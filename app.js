@@ -1,8 +1,17 @@
 // Listen for Submit
-document.getElementById('loan-form').addEventListener('submit', calculateResults);
+document.getElementById('loan-form').addEventListener('submit', function (e) {
+    // hide results
+    document.getElementById('results').style.display = 'none';
+    // show loader
+    document.getElementById('loading').style.display = 'block';
+
+    setTimeout(calculateResults, 2000)
+
+    e.preventDefault();
+});
 
 // Calculate Results
-function calculateResults(e) {
+function calculateResults() {
     console.log('Calculating..')
     // UI Vars
     const amount = document.getElementById('amount');
@@ -26,10 +35,46 @@ function calculateResults(e) {
         monthlyPayment.value = monthly.toFixed(2);
         totalPayment.value = (monthly * calculatedPayments).toFixed(2);
         totalInterest.value = ((monthly * calculatedPayments) - principal).toFixed(2);
+
+        // show results
+        document.getElementById('results').style.display = 'block';
+
+        // hide loader
+        document.getElementById('loading').style.display = 'none';
     } else {
         // if it is not finite
-        console.log('Please check your numbers')
+        showError('Please check your numbers');
     }
+}
 
-    e.preventDefault();
+// Show error
+function showError(error) {
+            // hide results
+            document.getElementById('results').style.display = 'none';
+
+            // hide loader
+            document.getElementById('loading').style.display = 'none';
+    // create div
+    const errorDiv = document.createElement('div');
+
+    // get elements
+    const card = document.querySelector('.card');
+    const heading = document.querySelector('.heading')
+
+    // Add class
+    errorDiv.className = 'alert alert-danger';
+
+    // Create text node and append to div
+    errorDiv.appendChild(document.createTextNode(error));
+
+    // inset error above heading
+    card.insertBefore(errorDiv, heading);
+
+    // remove error after 3 seconds
+    setTimeout(clearError, 3000);
+}
+
+// Clear error
+function clearError() {
+    document.querySelector('.alert').remove();
 }
